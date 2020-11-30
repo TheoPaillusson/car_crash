@@ -1,0 +1,3 @@
+graft car_crash
+global-exclude *.py[cod] __pycache__ *.so *.ipynb
+recursive-exclude  car_crash/jupy *
