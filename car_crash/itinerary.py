@@ -1,8 +1,19 @@
-# take gps coordinates and return name and distance
+#takes two addresses, returns route
 import requests
+<<<<<<< HEAD
 
-def itinerary(start_lon,start_lat,dest_lon,dest_lat):
-    url = f'http://router.project-osrm.org/route/v1/driving/{start_lon},{start_lat};{dest_lon},{dest_lat}?overview=false&steps=true'
+
+from geopy.geocoders import Nominatim
+def itinerary(address, destination):
+    geolocator = Nominatim(user_agent="car_crash")
+    start = geolocator.geocode(address + " Los Angeles")
+    end = geolocator.geocode(destination + " Los Angeles")
+    longitude_start = start.longitude
+    latitude_start = start.latitude
+    longitude_end = end.longitude
+    latitude_end = end.latitude
+    pos = longitude_start, latitude_start, longitude_end, latitude_end
+    url = f'http://router.project-osrm.org/route/v1/driving/{pos[0]},{pos[1]};{pos[2]},{pos[3]}?overview=false&steps=true'
     response = requests.get(url).json()
     step = response['routes'][0]['legs'][0]['steps']
     names = []
