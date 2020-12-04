@@ -5,7 +5,7 @@ def user_data():
     return departure, arrival
 
 # prediction du modele
-def model_predict(departure, arrival):
+def model_predict():
     mean_score = 0.7
     return mean_score
 

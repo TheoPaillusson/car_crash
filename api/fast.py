@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from car_crash.test_api import model_predict, user_data
+from app.app import return_inputs
+
 
 app = FastAPI()
 
@@ -10,10 +12,12 @@ def root():
 
 
 # variables de l'url
-departure, arrival = user_data()
-danger = model_predict(departure=departure, arrival=arrival)
+
+departure, arrival = return_inputs()
+danger = model_predict()
+
 
 # testing the api response
-@app.get("/danger/{d_long}/{d_lat}/{a_long}/{a_lat}")
-def return_danger(d_long: float, d_lat: float, a_long: float, a_lat: float ):
-    return {"mean_danger": danger}
+@app.get("/danger/")
+def return_danger():
+    return {"mean_danger": danger, 'test':departure}
