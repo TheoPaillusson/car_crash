@@ -1,8 +1,8 @@
 import pandas as pd
-from get_info import get_week_of_the_year, get_day_of_the_week, get_hour
+from car_crash.get_info import get_week_of_the_year, get_day_of_the_week, get_hour
 from data import get_data
 
-def convert_data(datetime, road)
+def convert_data(datetime, road):
     X = pd.DataFrame(dict(
         week_of_the_year=[float(get_week_of_the_year(datetime))],
         day_of_the_week=[float(get_day_of_the_week(datetime))],

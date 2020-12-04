@@ -1,9 +1,7 @@
 #takes two addresses, returns route
 import requests
-<<<<<<< HEAD
-
-
 from geopy.geocoders import Nominatim
+
 def itinerary(address, destination):
     geolocator = Nominatim(user_agent="car_crash")
     start = geolocator.geocode(address + " Los Angeles")
