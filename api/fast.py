@@ -1,29 +1,25 @@
 from fastapi import FastAPI
-from car_crash.test_api import model_predict, user_data
-
+from car_crash.itinerary import get_coordinates, itinerary
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
+
+api = FastAPI()
+
 # for api key
-dotenv_path = join(dirname(__file__), '.env')
+dotenv_path = join(dirname(dirname(__file__)), '.env')
 load_dotenv(dotenv_path)
-GOOGLE_MAP_API = os.environ.get('GOOGLE_MAP_API')
-
-app = FastAPI()
+google_map_api = os.environ.get('GOOGLE_MAP_API')
 
 
-@app.get("/")
+
+
+@api.get("/")
 def root():
     return {"message": "Hello World"}
 
-
-# variables de l'url
-
-#danger = model_predict()
-
-
 # testing the api response
-@app.get("/danger")
-def return_danger(d_long, d_lat, a_long, a_lat):
-    print(d_long, d_lat, a_long, a_lat)
-    return {"mean_danger": 'danger', 'test':'departure'}
+@api.get("/danger")
+def return_danger(departure, arrival):
+    coordinates = get_coordinates(departure=departure, arrival=arrival, api=google_map_api)
+    return itinerary(coordinates)

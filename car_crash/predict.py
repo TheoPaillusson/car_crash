@@ -30,3 +30,5 @@ def mean_danger(dictionnary,week,day,hour):
 
     return mean_danger
 
+def test_predict():
+    return 

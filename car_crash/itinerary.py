@@ -7,7 +7,6 @@ def get_coordinates(departure, arrival, api):
     url_destination =f'https://maps.googleapis.com/maps/api/geocode/json?address={arrival}&key={api}'
     response1 = requests.get(url_start).json()
     response2 =requests.get(url_destination).json()
-    return response1
     lon_start = response1['results'][0]['geometry']['location']['lng']
     lat_start = response1['results'][0]['geometry']['location']['lat']
     lon_end = response2['results'][0]['geometry']['location']['lng']
