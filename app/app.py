@@ -9,6 +9,7 @@ st.markdown("""# Predict the dangerousness of a car trip
 How dangerous is your trip today ?""")
 
 
+
 # input
 departure = st.text_input('Departure')
 arrival = st.text_input('Arrival')
@@ -35,3 +36,8 @@ def return_inputs():
 #     image = Image.open('images/map.png')
 #     st.image(image, caption='map', use_column_width=False)
 
+
+# bouton pour exécuter la requête
+url = ''
+params = {'d_long':, 'd_lat':, 'a_long':, 'a_lat':}
+response = requests.get(url, params=params)
