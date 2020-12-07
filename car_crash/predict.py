@@ -99,7 +99,7 @@ def no_day_hour(dataframe,list_roads,day,hour):
     dict_predict = {}
 
     for road in list_roads:
-        X_pred = pd.DataFrame([[hour,day,'DUNNET AVENUE']], columns=['hour','day_of_the_week','routes'])
+        X_pred = pd.DataFrame([[hour,day,road]], columns=['hour','day_of_the_week','routes'])
         result = final_pipe_trained.predict(X_pred.iloc[0:2])
         dict_predict[road] = result[0][0]
 
