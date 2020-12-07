@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from car_crash.test_api import model_predict, user_data
-from app.app import return_inputs
+
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
@@ -19,11 +19,11 @@ def root():
 
 # variables de l'url
 
-departure, arrival = return_inputs()
-danger = model_predict()
+#danger = model_predict()
 
 
 # testing the api response
-@app.get("/danger/")
-def return_danger():
-    return {"mean_danger": danger, 'test':departure}
+@app.get("/danger")
+def return_danger(d_long, d_lat, a_long, a_lat):
+    print(d_long, d_lat, a_long, a_lat)
+    return {"mean_danger": 'danger', 'test':'departure'}
