@@ -16,7 +16,7 @@ def convert_data(datetime, road)
     return X
 
 def scaling(x):
-    return 2.5195**x - 1.5195
+    return int(2.5195**x - 1.5194)
 
 def dispatch_roads(dictionary,dataframe,day,hour):
     """
