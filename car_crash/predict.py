@@ -1,4 +1,5 @@
 import pandas as pd
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
@@ -8,7 +9,7 @@ from sklearn.compose import ColumnTransformer
 from get_info import get_week_of_the_year, get_day_of_the_week, get_hour
 from data import get_data
 
-def convert_data(datetime, road)
+def convert_data(datetime, road):
     X = pd.DataFrame(dict(
         day_of_the_week=[float(get_day_of_the_week(datetime))],
         hour=[float(get_hour(datetime))],
@@ -130,17 +131,3 @@ def ponderated_mean(d1,d2):
     mean_danger = mean_danger/sum_dist
 
     return mean_danger
-
-
-
-# if road not in roads:
-#     type_of_road = groupby (type_road,day,hour) .mean() #déjà pré-calculé
-
-# elif (road,hour,day) in existing_combinations:
-#     severity = existing_combinations[(road,hour,day)] #déjà pré-calculé
-
-# else road in existing:
-    #filter main collision dataset by road == road1 or roa2 or road3
-    #(hour, day, severity)
-    #fit() to predict severity
-    #.predict(road1) severity
