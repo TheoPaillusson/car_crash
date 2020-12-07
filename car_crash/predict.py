@@ -6,18 +6,7 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from get_info import get_week_of_the_year, get_day_of_the_week, get_hour
-from data import get_data
-
-def convert_data(datetime, road):
-    X = pd.DataFrame(dict(
-        day_of_the_week=[float(get_day_of_the_week(datetime))],
-        hour=[float(get_hour(datetime))],
-        road=[str(road)]))
-    return X
-
-def scaling(x):
-    return 2.5195**x - 1.5195
+from car_crash.data import get_data
 
 def dispatch_roads(dictionary,dataframe,day,hour):
     """
