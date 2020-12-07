@@ -12,3 +12,4 @@ twine
 numpy
 scikit-learn
 GoogleMaps
+requests
