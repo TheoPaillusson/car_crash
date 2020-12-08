@@ -1,12 +1,11 @@
 import pandas as pd
-
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from car_crash.data import get_data
+from sklearn.ensemble import RandomForestRegressor
+from sklearn import preprocessing
 
 def dispatch_roads(dictionary,dataframe,day,hour):
     """
@@ -75,22 +74,24 @@ def no_day_hour(dataframe,list_roads,day,hour):
     inter = dataframe[dataframe['routes'].isin(list_roads)].copy()
 
     X = inter.drop(columns = ['collision_severity'])
-    y = inter[['collision_severity']]
+    y = inter['collision_severity']
 
     preprocessor = ColumnTransformer([('road_transformer', OneHotEncoder(sparse = False), ['routes'])])
 
+    forest = RandomForestRegressor(n_estimators=100, n_jobs = -1)
+
     final_pipe = Pipeline([
         ('preprocessing', preprocessor),
-        ('linear_regression', LinearRegression())])
+        ('linear_regression', forest)])
 
     final_pipe_trained = final_pipe.fit(X,y)
 
     dict_predict = {}
 
     for road in list_roads:
-        X_pred = pd.DataFrame([[hour,day,'DUNNET AVENUE']], columns=['hour','day_of_the_week','routes'])
-        result = final_pipe_trained.predict(X_pred.iloc[0:2])
-        dict_predict[road] = result[0][0]
+        X_pred = pd.DataFrame([[hour,day,road]], columns=['hour','day_of_the_week','routes'])
+        result = final_pipe_trained.predict(X_pred)
+        dict_predict[road] = result[0]
 
     return dict_predict
 
