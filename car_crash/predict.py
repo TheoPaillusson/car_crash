@@ -16,7 +16,7 @@ def convert_data(datetime, road)
     return X
 
 def scaling(x):
-    return int(2.5195**x - 1.5194)
+    return round(2.5195**x - 1.5195)
 
 def dispatch_roads(dictionary,dataframe,day,hour):
     """
@@ -89,9 +89,11 @@ def no_day_hour(dataframe,list_roads,day,hour):
 
     preprocessor = ColumnTransformer([('road_transformer', OneHotEncoder(sparse = False), ['routes'])])
 
+    forest = RandomForestRegressor(n_estimators=100, n_jobs = -1)
+
     final_pipe = Pipeline([
         ('preprocessing', preprocessor),
-        ('linear_regression', LinearRegression())])
+        ('linear_regression', forest)])
 
     final_pipe_trained = final_pipe.fit(X,y)
 
@@ -99,8 +101,8 @@ def no_day_hour(dataframe,list_roads,day,hour):
 
     for road in list_roads:
         X_pred = pd.DataFrame([[hour,day,road]], columns=['hour','day_of_the_week','routes'])
-        result = final_pipe_trained.predict(X_pred.iloc[0:2])
-        dict_predict[road] = result[0][0]
+        result = final_pipe_trained.predict(X_pred)
+        dict_predict[road] = result[0]
 
     return dict_predict
 
