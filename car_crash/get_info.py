@@ -33,3 +33,4 @@ def get_la_weather(api):
         return 'fog'
     else:
         return 'unknown'
+
