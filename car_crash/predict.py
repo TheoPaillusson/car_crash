@@ -1,23 +1,12 @@
 import pandas as pd
-
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from get_info import get_week_of_the_year, get_day_of_the_week, get_hour
-from data import get_data
+from sklearn.ensemble import RandomForestRegressor
+from sklearn import preprocessing
 
-def convert_data(datetime, road):
-    X = pd.DataFrame(dict(
-        day_of_the_week=[float(get_day_of_the_week(datetime))],
-        hour=[float(get_hour(datetime))],
-        road=[str(road)]))
-    return X
-
-def scaling(x):
-    return round(2.5195**x - 1.5195)
 
 def dispatch_roads(dictionary,dataframe,day,hour):
     """
@@ -86,7 +75,7 @@ def no_day_hour(dataframe,list_roads,day,hour):
     inter = dataframe[dataframe['routes'].isin(list_roads)].copy()
 
     X = inter.drop(columns = ['collision_severity'])
-    y = inter[['collision_severity']]
+    y = inter['collision_severity']
 
     preprocessor = ColumnTransformer([('road_transformer', OneHotEncoder(sparse = False), ['routes'])])
 
