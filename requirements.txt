@@ -10,4 +10,7 @@ yapf
 python-gitlab
 twine
 numpy
-sklearn
+scikit-learn
+GoogleMaps
+requests
+uvicorn

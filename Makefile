@@ -1,3 +1,9 @@
+run_api:
+	uvicorn api.fast:api --reload  # load web server with code autoreload
+
+
+
+
 # ----------------------------------
 #          INSTALL & TEST
 # ----------------------------------
@@ -58,3 +64,37 @@ pypi_test:
 
 pypi:
 	@twine upload dist/* -u lologibus2
+
+
+# ----------------------------------
+#         HEROKU COMMANDS
+# ----------------------------------
+
+streamlit:
+	-@streamlit run app.py
+
+heroku_login:
+	-@heroku login
+
+heroku_create_app:
+	-@heroku create ${APP_NAME}
+
+deploy_heroku:
+	-@git push heroku master
+	-@heroku ps:scale web=1
+
+
+# ----------------------------------
+#    LOCAL INSTALL COMMANDS
+# ----------------------------------
+install:
+	@pip install . -U
+
+clean:
+	@rm -fr */__pycache__
+	@rm -fr __init__.py
+	@rm -fr build
+	@rm -fr dist
+	@rm -fr *.dist-info
+	@rm -fr *.egg-info
+	-@rm model.joblib
