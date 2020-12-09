@@ -2,13 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import RandomForestRegressor
+from sklearn import preprocessing
 from data import get_data
-
-def scaling(x):
-    return round(2.5195**x - 1.5195)
 
 def dispatch_roads(dataframe_trajet,dataframe,day,hour):
     """
@@ -129,4 +127,3 @@ def ponderated_mean(dataframe_trajet,dataframe_severity):
     mean_danger = mean_danger/sum_dist
 
     return mean_danger
-
