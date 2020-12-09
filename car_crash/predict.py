@@ -6,48 +6,49 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn import preprocessing
+from data import get_data
 
-
-def dispatch_roads(dictionary,dataframe,day,hour):
+def dispatch_roads(dataframe_trajet,dataframe,day,hour):
     """
-    From a trip dictionary with roads as keys and distances as values,
+    From a trip DataFrame with roads and distances,
     dispatches the roads into 3 lists according to the scenario
     """
     list_road_day_hour = []
     list_no_road = []
     list_no_day_hour = []
 
-    for key,value in dictionary.items():
+    for road in dataframe_trajet['names']:
 
-        if key.upper() not in dataframe['routes'].unique():
-            list_no_road.append(key.upper())
+        if str(road).upper() not in dataframe['routes'].unique():
+            list_no_road.append(str(road).upper())
 
-        elif len(dataframe[(dataframe['routes'] == key.upper()) \
-                           & (dataframe['day_of_the_week'] == day) \
-                           & (dataframe['hour'] == hour)]) == 0:
-            list_no_day_hour.append(key.upper())
+        elif len(dataframe[(dataframe['routes'] == str(road).upper()) \
+                           & (dataframe['day_of_the_week'] == day) & (dataframe['hour'] == hour)]) == 0:
+            list_no_day_hour.append(str(road).upper())
 
         else:
-            list_road_day_hour.append(key.upper())
+            list_road_day_hour.append(str(road).upper())
 
     return list_road_day_hour, list_no_road, list_no_day_hour
 
 def road_day_hour(dataframe,list_roads,day,hour):
     """
     For tuples of (roads,day,hour) we have data on,
-    returns a dictionnary with roads as keys
-    and collision severity estimates as values
+    returns a dataframe with roads and collision
+    severity estimates
     """
-    dict_predict = {}
+    list_pred = []
 
     for road in list_roads:
         inter = dataframe[(dataframe['routes'] == road) \
                                     & (dataframe['day_of_the_week'] == day) \
                                     & (dataframe['hour'] == hour)]
         result = inter['collision_severity'].mean()
-        dict_predict[road] = result
+        list_pred.append(result)
+    dict_pred = {'names':list_roads,'collision_severity':list_pred}
+    df_pred = pd.DataFrame(dict_pred)
 
-    return dict_predict
+    return df_pred
 
 def road_not_in_roads(dataframe,list_roads,day,hour):
     """
@@ -55,16 +56,19 @@ def road_not_in_roads(dataframe,list_roads,day,hour):
     returns a dictionnary with roads as keys
     and collision severity estimates as values
     """
-    dict_predict = {}
+    list_pred = []
 
     inter = dataframe[(dataframe['day_of_the_week'] == day) \
                       & (dataframe['hour'] == hour)]
     result = inter['collision_severity'].mean()
 
     for road in list_roads:
-        dict_predict[road] = result
+        list_pred.append(result)
 
-    return dict_predict
+    dict_pred = {'names':list_roads,'collision_severity':list_pred}
+    df_pred = pd.DataFrame(dict_pred)
+
+    return df_pred
 
 def no_day_hour(dataframe,list_roads,day,hour):
     """
@@ -72,7 +76,7 @@ def no_day_hour(dataframe,list_roads,day,hour):
     returns a dictionnary with roads as keys
     and collision severity estimates as values
     """
-    inter = dataframe[dataframe['routes'].isin(list_roads)].copy()
+    inter = df[df['routes'].isin(list_roads)].copy()
 
     X = inter.drop(columns = ['collision_severity'])
     y = inter['collision_severity']
@@ -87,25 +91,25 @@ def no_day_hour(dataframe,list_roads,day,hour):
 
     final_pipe_trained = final_pipe.fit(X,y)
 
-    dict_predict = {}
+    list_pred = []
 
     for road in list_roads:
         X_pred = pd.DataFrame([[hour,day,road]], columns=['hour','day_of_the_week','routes'])
         result = final_pipe_trained.predict(X_pred)
-        dict_predict[road] = result[0]
+        list_pred.append(result[0])
 
-    return dict_predict
+    dict_pred = {'names':list_roads,'collision_severity':list_pred}
+    df_pred = pd.DataFrame(dict_pred)
 
-def concat_3_dict(d1,d2,d3):
+    return df_pred
+
+def concat_3_df(df1,df2,df3):
     """
-    Concatenates 3 dictionaries
+    Concatenates 3 DataFrames
     """
-    d4 = d1.copy()
-    d4.update(d2)
-    d4.update(d3)
-    return d4
+    return pd.concat([df_1, df_2,df_3]).reset_index(drop=True)
 
-def ponderated_mean(d1,d2):
+def ponderated_mean(dataframe_trajet,dataframe_severity):
     """
     Takes two dictionaries in argument :
     the first one has roads in keys and distance in values,
@@ -115,9 +119,10 @@ def ponderated_mean(d1,d2):
     mean_danger = 0
     sum_dist = 0
 
-    for key,value in d1.items():
-        mean_danger += d2[key.upper()] * value
-        sum_dist += value
+    for i in range(len(dataframe_trajet)):
+        inter = df_concat[df_concat['names'] == str(dataframe_trajet['names'][i]).upper()].reset_index(drop=True)
+        mean_danger += inter['collision_severity'].loc[0] * dataframe_trajet['distances'][i]
+        sum_dist += dataframe_trajet['distances'][i]
 
     mean_danger = mean_danger/sum_dist
 
