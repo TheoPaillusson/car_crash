@@ -6,7 +6,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn import preprocessing
-from data import get_data
+from car_crash.data import get_data
 
 def dispatch_roads(dataframe_trajet,dataframe,day,hour):
     """
@@ -76,7 +76,7 @@ def no_day_hour(dataframe,list_roads,day,hour):
     returns a dictionnary with roads as keys
     and collision severity estimates as values
     """
-    inter = df[df['routes'].isin(list_roads)].copy()
+    inter = dataframe[dataframe['routes'].isin(list_roads)].copy()
 
     X = inter.drop(columns = ['collision_severity'])
     y = inter['collision_severity']
@@ -107,7 +107,7 @@ def concat_3_df(df1,df2,df3):
     """
     Concatenates 3 DataFrames
     """
-    return pd.concat([df_1, df_2,df_3]).reset_index(drop=True)
+    return pd.concat([df1, df2,df3]).reset_index(drop=True)
 
 def ponderated_mean(dataframe_trajet,dataframe_severity):
     """
@@ -120,9 +120,9 @@ def ponderated_mean(dataframe_trajet,dataframe_severity):
     sum_dist = 0
 
     for i in range(len(dataframe_trajet)):
-        inter = df_concat[df_concat['names'] == str(dataframe_trajet['names'][i]).upper()].reset_index(drop=True)
-        mean_danger += inter['collision_severity'].loc[0] * dataframe_trajet['distances'][i]
-        sum_dist += dataframe_trajet['distances'][i]
+        inter = dataframe_severity[dataframe_severity['names'] == str(dataframe_trajet['names'][i]).upper()].reset_index(drop=True)
+        mean_danger += float(inter['collision_severity'].loc[0]) * float(dataframe_trajet['distances'][i])
+        sum_dist += float(dataframe_trajet['distances'][i])
 
     mean_danger = mean_danger/sum_dist
 

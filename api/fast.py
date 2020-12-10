@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from car_crash.data import get_data
 from pydantic import BaseModel
 import json
+import numpy as np
 
 # importing the dataframe for predictions
 df = get_data()
@@ -34,14 +35,19 @@ def root():
 def create_trip(trip:Trip):
 # computation of dangerousness
 
-    # import ipdb
-    # ipdb.set_trace()
-
     day = days_of_the_week[trip.day]
     hour = int(trip.hour)
     itinerary = trip.steps
     
-    list_road_day_hour, list_no_road, list_no_day_hour = dispatch_roads(dictionary=itinerary, dataframe=df, day=day, hour=hour)
+    itinerary = np.array(itinerary['data'])
+    dataframe_trajet = pd.DataFrame(columns=['names', 'distances'])
+    dataframe_trajet.names = itinerary[:,0]
+    dataframe_trajet.distances = itinerary[:,1]
+    dataframe_trajet.distances.apply(lambda x: float(x))
+    print(dataframe_trajet)
+
+
+    list_road_day_hour, list_no_road, list_no_day_hour = dispatch_roads(dataframe_trajet=dataframe_trajet, dataframe=df, day=day, hour=hour)
 
     dict_road_day_hour = road_day_hour(dataframe=df, list_roads=list_road_day_hour, day=day, hour=hour)
     
@@ -49,8 +55,8 @@ def create_trip(trip:Trip):
     
     dict_no_day_hour = no_day_hour(dataframe=df, list_roads=list_no_day_hour, day=day, hour=hour)
     
-    df_concat = concat_3_dict(dict_road_day_hour, dict_no_road, dict_no_day_hour)
+    df_concat = concat_3_df(dict_road_day_hour, dict_no_road, dict_no_day_hour)
     
-    mean_danger = ponderated_mean(itinerary, df_concat)
+    mean_danger = ponderated_mean(dataframe_trajet=dataframe_trajet, dataframe_severity=df_concat)
         
     return mean_danger
